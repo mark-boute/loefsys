@@ -1,0 +1,31 @@
+*.pyc
+.*swp
+*.sublime-*
+*.bak
+.pydevproject
+.project
+.settings
+.idea/
+.vscode/
+.tox/
+db.sqlite3
+*.egg-info
+
+covhtml/
+.make
+
+# rope
+.ropeproject/
+
+# Coverage
+.coverage
+
+# venv from source_me.sh
+venv/
+
+# direnv
+.envrc
+.env*
+
+# macOS
+.DS_Store
