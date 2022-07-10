@@ -33,6 +33,7 @@ class User(models.Model):
 
     relation_number = models.IntegerField(
         unique=True,
+        primary_key=True,
     )
 
     # ----- Registration information -----

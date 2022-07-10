@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "localflavor",
     "users.apps.UsersConfig",
+    "committees.apps.CommitteesConfig",
+    "events.apps.EventsConfig",
+    "reservations.apps.ReservationsConfig",
     "utils",
 ]
 
