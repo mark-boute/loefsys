@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "committees.apps.CommitteesConfig",
     "events.apps.EventsConfig",
     "reservations.apps.ReservationsConfig",
+    "boats.apps.BoatsConfig",
     "utils",
 ]
 

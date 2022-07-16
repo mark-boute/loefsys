@@ -1,2 +1,2 @@
 from .reservation import *
-from .boat import *
+from .boat_reservation import *
