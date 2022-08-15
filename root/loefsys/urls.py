@@ -15,11 +15,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
 
-# from root import users
+from . import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("api/", include("loefsys.api.urls")),
+
+    path("", views.index, name="index"),
+    path("register/", views.index, name="index"),
+    path("change-password/", auth_views.PasswordChangeView.as_view),
+    path("login/", auth_views.LoginView.as_view),
+    path("logout/", auth_views.LogoutView.as_view),
     # Apps
-    path("", include("users.urls")),
+    path("members/", include('members.urls')),
+    path("events/", include('events.urls')),
 ]

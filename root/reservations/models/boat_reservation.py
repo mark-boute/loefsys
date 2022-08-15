@@ -1,10 +1,10 @@
+from django.conf import settings
 from django.db import models
 
 from django.contrib.contenttypes.fields import GenericRelation
 
 from reservations.models import Reservation
 from boats.models import Boat
-from users.models import User
 
 
 class BoatReservation(models.Model):
@@ -14,13 +14,17 @@ class BoatReservation(models.Model):
         on_delete=models.CASCADE,
     )
 
+    skipper = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        models.SET_NULL,
+        null=True
+    )
+
     # boat form information
-    motor_time = models.TimeField(
+    motor_time = models.DurationField(
         blank=True,
         null=True,
     )
 
-    skipper = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-    )
+    def __str__(self):
+        return str(self.boat)

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block body_class %}home{% endblock %}
+
+{% block body %}
+<ul>
+    <li><a href="{% url 'members:members' %}">Members</a></li>
+    <li><a href="{% url 'events:events' %}">Events</a></li>
+</ul>
+
+
+{% endblock %}

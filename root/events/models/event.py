@@ -1,8 +1,10 @@
+from django.core import validators
 from django.db import models
+from django.urls import reverse
+from django.utils import timezone
 
 from django.utils.translation import gettext_lazy as _
-
-from users.models import User
+from django.utils.text import format_lazy
 
 
 class Event(models.Model):
@@ -27,6 +29,13 @@ class Event(models.Model):
     title = models.CharField(_("title"), max_length=100)
 
     # description = HTMLField(_("description"),)
+
+    # organiser (should use contenttypes for user, committee, yearclub)
+
+    is_open_event = models.BooleanField(
+        help_text=_("Event is open for non-members"),
+        default=False,
+    )
 
     start = models.DateTimeField(_("start time"))
 
@@ -93,7 +102,7 @@ class Event(models.Model):
         ),
     )
 
-    location = models.CharField(_("location"), max_length=255,)
+    location = models.CharField(_("location"), max_length=255, )
 
     map_location = models.CharField(
         _("location for minimap"),
@@ -111,7 +120,7 @@ class Event(models.Model):
         max_digits=5,
         decimal_places=2,
         default=0,
-        # validators=[validators.MinValueValidator(0)],
+        validators=[validators.MinValueValidator(0)],
     )
 
     fine = models.DecimalField(
@@ -122,7 +131,7 @@ class Event(models.Model):
         # Minimum fine is checked in this model's clean(), as it is only for
         # events that require registration.
         help_text=_("Fine if participant does not show up (at least €5)."),
-        # validators=[validators.MinValueValidator(0)],
+        validators=[validators.MinValueValidator(0)],
     )
 
     max_participants = models.PositiveSmallIntegerField(
@@ -133,16 +142,16 @@ class Event(models.Model):
         _("message when there is no registration"),
         max_length=200,
         blank=True,
-        null=True,
-       # help_text=(
-       #     format_lazy("{} {}", _("Default:"), DEFAULT_NO_REGISTRATION_MESSAGE)
-       # ),
+        default=DEFAULT_NO_REGISTRATION_MESSAGE,
+        help_text=(
+            format_lazy("{} {}", _("Default:"), DEFAULT_NO_REGISTRATION_MESSAGE)
+        ),
     )
 
     published = models.BooleanField(_("published"), default=False)
 
     @property
-    def registrations(self):
+    def active_registrations(self):
         """Queryset with all non-cancelled registrations."""
         return self.eventregistration_set.filter(date_cancelled=None)
 
@@ -150,12 +159,35 @@ class Event(models.Model):
     def participants(self):
         """Return the active participants."""
         if self.max_participants is not None:
-            return self.registrations.order_by("date")[: self.max_participants]
-        return self.registrations.order_by("date")
+            return self.active_registrations.order_by("date")[: self.max_participants]
+        return self.active_registrations.order_by("date")
 
     @property
     def queue(self):
         """Return the waiting queue."""
         if self.max_participants is not None:
-            return self.registrations.order_by("date")[self.max_participants :]
+            return self.active_registrations.order_by("date")[self.max_participants:]
         return []
+
+    @property
+    def registration_required(self):
+        return self.registration_start and self.registration_end
+
+    @property
+    def can_cancel_for_free(self):
+        return self.registration_required and (self.cancel_deadline > timezone.now())
+
+    @property
+    def reached_participants_limit(self):
+        """Is this event up to capacity?."""
+        return self.max_participants is not None and self.max_participants <= self.active_registrations.count()
+
+    @property
+    def registration_closed(self):
+        return self.registration_end is not None and timezone.now() > self.registration_end
+
+    def get_absolute_url(self):
+        return reverse("events:event", args=[str(self.pk)])
+
+    def __str__(self):
+        return self.title

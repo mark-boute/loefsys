@@ -20,7 +20,8 @@ class Boat(models.Model):
         choices=BoatTypes.choices,
     )
 
-    skippership = None  # think of a way to implement certificates
+    # think of a way to implement certificates
+    skippership = None
 
     location = models.CharField(
         max_length=64,
@@ -29,16 +30,5 @@ class Boat(models.Model):
     # fields for boats with motor
     has_motor = models.BooleanField()
 
-    @property
-
-
-
-class BoatDamages(models.Model):
-    boat = models.ForeignKey(
-        Boat,
-        on_delete=models.CASCADE,
-    )
-
-    damage = models.CharField(
-        max_length=128,
-    )
+    def __str__(self):
+        return self.name

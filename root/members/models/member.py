@@ -1,8 +1,13 @@
 from django.db import models
-
-from django.conf import settings
+from django.contrib.auth.models import User
+from django.contrib import admin
 from django.core import validators
+
+from django.db.models import Value, Q
+from django.db.models.functions import Concat
+
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 
 from phonenumber_field.modelfields import PhoneNumberField
 from localflavor.generic.models import IBANField
@@ -21,18 +26,16 @@ class Genders(models.TextChoices):
     UNSPECIFIED = 'U', _("Prefer not to say")
 
 
-class User(models.Model):
-    update_date = models.DateTimeField("Last Updated")
+class Member(models.Model):
 
+    # connect conscribo member to user
     user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        to=User,
+        on_delete=models.SET_NULL,
+        null=True,
     )
 
-    # Conscribo link
-
-    relation_number = models.IntegerField(
-        unique=True,
+    relation_number = models.PositiveIntegerField(
         primary_key=True,
     )
 
@@ -42,14 +45,12 @@ class User(models.Model):
         max_length=20,
         verbose_name=_("Educational institution"),
         blank=True,
-        null=True,
     )
 
     programme = models.CharField(
         max_length=20,
         verbose_name=_("Study programme"),
         blank=True,
-        null=True,
     )
 
     student_number = models.CharField(
@@ -62,7 +63,6 @@ class User(models.Model):
             )
         ],
         blank=True,
-        null=True,
         unique=True,
     )
 
@@ -70,28 +70,23 @@ class User(models.Model):
         verbose_name=_("RSC card number"),
         max_length=9,
         blank=True,
-        null=True,
         unique=True,
     )
 
     member_since = models.DateField()
 
-    member_until = models.DateField()
+    member_until = models.DateField(null=True, blank=True)
 
-    alumni_since = models.DateField(
-        blank=True,
-        null=True
-    )
+    alumni_since = models.DateField(blank=True, null=True)
 
     payment_method = models.CharField(
         choices=PaymentMethods.choices,
         max_length=2,
     )
 
-    remark = models.CharField(
+    remark = models.TextField(
         max_length=500,
         blank=True,
-        null=True,
     )
 
     # ---- Address information -----
@@ -142,6 +137,28 @@ class User(models.Model):
 
     birthday = models.DateField(verbose_name=_("Birthday"), null=True)
 
+    gender = models.CharField(
+        choices=Genders.choices,
+        max_length=1,
+    )
+
+    # --- Communication preference ----
+
+    receive_newsletter = models.BooleanField(
+        verbose_name=_("Receive newsletter"),
+        help_text=_("Receive the Newsletter"),
+        default=True,
+    )
+
+    # ___________________________-
+
+    # # TODO dependency: pillow
+    # avatar = models.ImageField(
+    #     upload_to=None,
+    #     blank=True,
+    #     null=True,
+    # )
+
     show_birthday = models.BooleanField(
         verbose_name=_("Display birthday"),
         help_text=_(
@@ -155,7 +172,6 @@ class User(models.Model):
         verbose_name=_("Profile text"),
         help_text=_("Text to display on your profile"),
         blank=True,
-        null=True,
         max_length=4096,
     )
 
@@ -166,23 +182,49 @@ class User(models.Model):
         null=True,
     )
 
-    gender = models.CharField(
-        choices=Genders.choices,
-        max_length=1,
+    nickname = models.CharField(
+        max_length=30,
+        verbose_name=_("Nickname"),
+        blank=True,
+        null=True,
     )
 
-    # photo = models.ImageField(
-    #    verbose_name=_("Photo"),
-    #    upload_to=_profile_image_path,
-    #    storage=get_public_storage,
-    #    null=True,
-    #    blank=True,
+    display_name_preference = models.CharField(
+        max_length=10,
+        verbose_name=_("How to display name"),
+        choices=(
+            ("full", _("Show full name")),
+            ("nickname", _("Show only nickname")),
+            ("firstname", _("Show only first name")),
+            ("initials", _("Show initials and last name")),
+            ("fullnick", _("Show name like \"John 'nickname' Doe\"")),
+            ("nicklast", _("Show nickname and last name")),
+        ),
+        default="full",
+    )
+
+    @property
+    def is_member(self):
+        return self.member_until > timezone.now().date()
+
+    # @property
+    # def active_committees(self):
+    #     return self.committees.filter(committeemembership__until=None)
+    #
+    # @admin.display(
+    #     boolean=True,
+    #     description=_('Committee Head'),
     # )
+    # def is_committee_head(self):
+    #     return self.active_committees\
+    #                .filter(Q(committeemembership__is_head=True))\
+    #                .exists()
 
-    # --- Communication preference ----
+    # @property
+    # @admin.display(ordering=Concat('last_name', Value(' '), 'first_name'))
+    # def full_name(self):
+    #     return self.user.get_full_name()
 
-    receive_newsletter = models.BooleanField(
-        verbose_name=_("Receive newsletter"),
-        help_text=_("Receive the Thalia Newsletter"),
-        default=True,
-    )
+    def __str__(self):
+        return self.user.get_full_name()
+

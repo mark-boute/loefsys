@@ -13,3 +13,6 @@ class Wetsuit(models.Model):
         max_length=32,
         choices=SIZES,
     )
+
+    def __str__(self):
+        return "Wetsuit " + str(self.size)
