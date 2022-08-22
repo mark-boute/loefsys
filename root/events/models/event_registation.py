@@ -22,9 +22,12 @@ class EventRegistration(models.Model):
         # limit_choices_to=registration_user_choices_limit,
     )
 
+    class Meta:
+        unique_together = ("event", "user")
+
     # if not user.member:
     guest_form = models.ForeignKey(
-        'events.GuestContactDetails',
+        "events.GuestContactDetails",
         on_delete=models.CASCADE,
         null=True,
         blank=True,
@@ -33,7 +36,10 @@ class EventRegistration(models.Model):
     date = models.DateTimeField(_("registration date"), default=timezone.now)
     date_cancelled = models.DateTimeField(_("cancellation date"), null=True, blank=True)
 
-    present = models.BooleanField(_("present"), default=False, )
+    present = models.BooleanField(
+        _("present"),
+        default=False,
+    )
     paid = models.BooleanField(
         default=False,
     )

@@ -102,7 +102,10 @@ class Event(models.Model):
         ),
     )
 
-    location = models.CharField(_("location"), max_length=255, )
+    location = models.CharField(
+        _("location"),
+        max_length=255,
+    )
 
     map_location = models.CharField(
         _("location for minimap"),
@@ -135,7 +138,9 @@ class Event(models.Model):
     )
 
     max_participants = models.PositiveSmallIntegerField(
-        _("maximum number of participants"), blank=True, null=True,
+        _("maximum number of participants"),
+        blank=True,
+        null=True,
     )
 
     no_registration_message = models.CharField(
@@ -166,7 +171,7 @@ class Event(models.Model):
     def queue(self):
         """Return the waiting queue."""
         if self.max_participants is not None:
-            return self.active_registrations.order_by("date")[self.max_participants:]
+            return self.active_registrations.order_by("date")[self.max_participants :]
         return []
 
     @property
@@ -180,11 +185,16 @@ class Event(models.Model):
     @property
     def reached_participants_limit(self):
         """Is this event up to capacity?."""
-        return self.max_participants is not None and self.max_participants <= self.active_registrations.count()
+        return (
+            self.max_participants is not None
+            and self.max_participants <= self.active_registrations.count()
+        )
 
     @property
     def registration_closed(self):
-        return self.registration_end is not None and timezone.now() > self.registration_end
+        return (
+            self.registration_end is not None and timezone.now() > self.registration_end
+        )
 
     def get_absolute_url(self):
         return reverse("events:event", args=[str(self.pk)])

@@ -11,7 +11,7 @@ class CommitteeMembership(models.Model):
     )
 
     committee = models.ForeignKey(
-        'committees.Committee',
+        "committees.Committee",
         models.CASCADE,
     )
 

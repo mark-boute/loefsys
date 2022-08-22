@@ -16,8 +16,9 @@ class ProfileListView(ListView):
 @method_decorator(login_required, "dispatch")  # TODO change to member_required
 class ProfileDetailView(DetailView):
     """View that renders a member's profile."""
+
     model = Member
-    template_name = 'members/profile.html'
+    template_name = "members/profile.html"
 
     def setup(self, request, *args, **kwargs) -> None:
         if "pk" not in kwargs and request.user.member:

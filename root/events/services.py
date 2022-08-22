@@ -51,9 +51,7 @@ def is_user_present(user, event):
         return None
 
     return (
-        event.registrations.filter(
-            user=user, date_cancelled=None, present=True
-        ).count()
+        event.registrations.filter(user=user, date_cancelled=None, present=True).count()
         > 0
     )
 
@@ -99,7 +97,6 @@ def create_registration(user, event):
             return EventRegistration.objects.create(event=event, user=user)
 
     return registration
-
 
 
 # def cancel_registration(member, event):

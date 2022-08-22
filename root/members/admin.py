@@ -14,48 +14,62 @@ from events.models import EventRegistration
 
 class MemberInline(admin.StackedInline):
     model = Member
-    verbose_name = 'Membership'
+    verbose_name = "Membership"
     can_delete = False
     classes = ["collapse"]
 
     fieldsets = [
-        ('Personal details', {'fields': [
-            'gender',
-
-            'birthday',
-
-            'student_number',
-            'institution',
-            'programme',
-        ]}),
-        ('Contact details', {'fields': [
-            'phone_number',
-
-            'address_street',
-            'address_street2',
-            'address_postal_code',
-            'address_city',
-            'address_country',
-        ]}),
-        ('Membership details', {'fields': [
-            'relation_number',
-            'remark',
-
-            'RSC_number',
-            'member_since',
-            'member_until',
-            'alumni_since',
-
-            'payment_method',
-            'IBAN',
-        ]}),
-        ('Profile', {'fields': [
-            'initials',
-            'nickname',
-            'display_name_preference',
-
-            'show_birthday',
-        ]}),
+        (
+            "Personal details",
+            {
+                "fields": [
+                    "gender",
+                    "birthday",
+                    "student_number",
+                    "institution",
+                    "programme",
+                ]
+            },
+        ),
+        (
+            "Contact details",
+            {
+                "fields": [
+                    "phone_number",
+                    "address_street",
+                    "address_street2",
+                    "address_postal_code",
+                    "address_city",
+                    "address_country",
+                ]
+            },
+        ),
+        (
+            "Membership details",
+            {
+                "fields": [
+                    "relation_number",
+                    "remark",
+                    "RSC_number",
+                    "member_since",
+                    "member_until",
+                    "alumni_since",
+                    "payment_method",
+                    "IBAN",
+                ]
+            },
+        ),
+        (
+            "Profile",
+            {
+                "fields": [
+                    "initials",
+                    "nickname",
+                    "display_name_preference",
+                    "show_birthday",
+                ]
+            },
+        ),
     ]
 
 
@@ -64,11 +78,10 @@ class CommitteeInline(admin.TabularInline):
     extra = 0
     classes = ["collapse"]
     can_delete = False
-    ordering = ('-is_head', 'since')
+    ordering = ("-is_head", "since")
 
     def get_queryset(self, request):
-        return super(CommitteeInline, self)\
-            .get_queryset(request).filter(until=None)
+        return super(CommitteeInline, self).get_queryset(request).filter(until=None)
 
     def has_delete_permission(self, request, obj=None):
         return request.user.is_superuser
@@ -78,65 +91,79 @@ class FutureEventRegistrationsInline(admin.TabularInline):
     model = EventRegistration
     extra = 0
     classes = ["collapse"]
-    ordering = ['event']
+    ordering = ["event"]
 
     def get_queryset(self, request):
-        return super(FutureEventRegistrationsInline, self)\
-            .get_queryset(request).filter(Q(event__end__gt=timezone.now()) & Q(date_cancelled=None))
+        return (
+            super(FutureEventRegistrationsInline, self)
+            .get_queryset(request)
+            .filter(Q(event__end__gt=timezone.now()) & Q(date_cancelled=None))
+        )
 
 
 class CommitteeHeadFilter(admin.SimpleListFilter):
-    title = _('committee head')
-    parameter_name = 'is_head'
+    title = _("committee head")
+    parameter_name = "is_head"
 
     def lookups(self, request, model_admin):
         return (
-            ('Yes', _('Yes')),
-            ('No', _('No')),
+            ("Yes", _("Yes")),
+            ("No", _("No")),
         )
 
     def queryset(self, request, queryset):
-        committee_heads = CommitteeMembership.objects\
-            .filter(Q(is_head=True) & Q(until=None)).values_list('user_id', flat=True)
-        if self.value() == 'Yes':
+        committee_heads = CommitteeMembership.objects.filter(
+            Q(is_head=True) & Q(until=None)
+        ).values_list("user_id", flat=True)
+        if self.value() == "Yes":
             return queryset.filter(id__in=committee_heads)
 
-        if self.value() == 'No':
+        if self.value() == "No":
             return queryset.exclude(id__in=committee_heads)
 
 
 class CityListFilter(admin.SimpleListFilter):
-    title = _('city')
-    parameter_name = 'address_city'
+    title = _("city")
+    parameter_name = "address_city"
 
     def lookups(self, request, model_admin):
         return (
-            ('Nijmegen', _('Nijmegen')),
-            ('Arnhem', _('Arnhem')),
-            ('Other', _('Other'))
+            ("Nijmegen", _("Nijmegen")),
+            ("Arnhem", _("Arnhem")),
+            ("Other", _("Other")),
         )
 
     def queryset(self, request, queryset):
-        if self.value() == 'Nijmegen':
-            return queryset.filter(member__address_city__icontains='Nijmegen')
+        if self.value() == "Nijmegen":
+            return queryset.filter(member__address_city__icontains="Nijmegen")
 
-        if self.value() == 'Arnhem':
-            return queryset.filter(member__address_city__icontains='Arnhem')
+        if self.value() == "Arnhem":
+            return queryset.filter(member__address_city__icontains="Arnhem")
 
-        if self.value() == 'Other':
+        if self.value() == "Other":
             return queryset.exclude(
-                Q(address_city__icontains='Arnhem') |
-                Q(address_city__icontains='Nijmegen')
+                Q(address_city__icontains="Arnhem")
+                | Q(address_city__icontains="Nijmegen")
             )
 
 
 class UserAdmin(DjangoUserAdmin):
     # form = forms.UserChangeForm
     # add_form = forms.UserCreationForm
-    list_display = ['username', 'get_full_name', 'email']  # , 'member__student_number', 'member__is_committee_head'
+    list_display = [
+        "username",
+        "get_full_name",
+        "email",
+    ]  # , 'member__student_number', 'member__is_committee_head'
     # actions = []
     inlines = [MemberInline, CommitteeInline, FutureEventRegistrationsInline]
-    list_filter = (CommitteeHeadFilter, 'member__gender', CityListFilter, 'groups', 'is_superuser')
+    list_filter = (
+        CommitteeHeadFilter,
+        "member__gender",
+        CityListFilter,
+        "groups",
+        "is_superuser",
+    )
 
 
 admin.site.unregister(get_user_model())

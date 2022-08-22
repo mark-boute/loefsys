@@ -18,7 +18,7 @@ class RegistrationInline(admin.TabularInline):
 
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ['title', 'start']
+    list_display = ["title", "start"]
     inlines = [RegistrationInline]
 
 

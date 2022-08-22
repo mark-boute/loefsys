@@ -11,9 +11,7 @@ from utils import countries
 
 class GuestContactDetails(models.Model):
     user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        models.CASCADE,
-        related_name='guest_form'
+        settings.AUTH_USER_MODEL, models.CASCADE, related_name="guest_form"
     )
 
     phone_number = PhoneNumberField()

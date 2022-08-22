@@ -1,6 +1,11 @@
 from django.urls import path, include
 
-from events.views import EventListView, EventDetailView, EventRegisterView, EventGuestContactCreateView
+from events.views import (
+    EventListView,
+    EventDetailView,
+    EventRegisterView,
+    EventGuestContactCreateView,
+)
 
 app_name = "events"
 
@@ -26,7 +31,6 @@ urlpatterns = [
                     EventGuestContactCreateView.as_view(),
                     name="registration",
                 ),
-
             ]
         ),
     ),

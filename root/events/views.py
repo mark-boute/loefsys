@@ -22,15 +22,18 @@ class EventListView(ListView):
     context_object_name = "events"
 
     def get_queryset(self):
-        return Event.objects.annotate(future=F('start')).filter(future__gt=timezone.now())
+        return Event.objects.annotate(future=F("start")).filter(
+            future__gt=timezone.now()
+        )
 
 
 @method_decorator(login_required, "dispatch")
 class EventDetailView(DetailView):
     """View that renders a member's profile."""
+
     model = Event
     queryset = Event.objects.filter(published=True)
-    template_name = 'events/event.html'
+    template_name = "events/event.html"
     context_object_name = "event"
 
     def get_context_data(self, **kwargs):
@@ -83,7 +86,11 @@ class EventRegisterView(View):
                 return redirect("events:registration", event.pk)
 
             if (not request.user.member) and request.user.guest_form:
-                if event.price > 0 or event.fine > 0 and not request.user.guest_form.IBAN:
+                if (
+                    event.price > 0
+                    or event.fine > 0
+                    and not request.user.guest_form.IBAN
+                ):
                     # TODO add message for IBAN required.
                     return redirect("events:registration", event.pk)
                 # if address_required becomes a thing, add a check here.
@@ -100,7 +107,7 @@ class EventRegisterView(View):
 # TODO fix this somehow, this is should redirect back to the event.
 class EventGuestContactCreateView(LoginRequiredMixin, CreateView):
     form_class = GuestContactDetails
-    exclude = ['user']
+    exclude = ["user"]
 
     def form_valid(self, form):
         form.user = self.request.user

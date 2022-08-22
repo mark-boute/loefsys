@@ -10,8 +10,8 @@ class Committee(models.Model):
 
     members = models.ManyToManyField(
         to=User,
-        through='committees.CommitteeMembership',
-        through_fields=('committee', 'user'),
+        through="committees.CommitteeMembership",
+        through_fields=("committee", "user"),
         symmetrical=True,
         blank=True,
     )

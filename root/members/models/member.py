@@ -16,14 +16,14 @@ from utils import countries
 
 
 class PaymentMethods(models.TextChoices):
-    COLLECTION = 'IN', _("Collection")
+    COLLECTION = "IN", _("Collection")
 
 
 class Genders(models.TextChoices):
-    MALE = 'M', _("Male")
-    FEMALE = 'F', _("Female")
-    OTHER = 'O', _("Other")
-    UNSPECIFIED = 'U', _("Prefer not to say")
+    MALE = "M", _("Male")
+    FEMALE = "F", _("Female")
+    OTHER = "O", _("Other")
+    UNSPECIFIED = "U", _("Prefer not to say")
 
 
 class Member(models.Model):
@@ -227,4 +227,3 @@ class Member(models.Model):
 
     def __str__(self):
         return self.user.get_full_name()
-

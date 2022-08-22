@@ -22,13 +22,12 @@ from . import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("loefsys.api.urls")),
-
     path("", views.index, name="index"),
     path("register/", views.index, name="index"),
     path("change-password/", auth_views.PasswordChangeView.as_view),
     path("login/", auth_views.LoginView.as_view),
     path("logout/", auth_views.LogoutView.as_view),
     # Apps
-    path("members/", include('members.urls')),
-    path("events/", include('events.urls')),
+    path("members/", include("members.urls")),
+    path("events/", include("events.urls")),
 ]

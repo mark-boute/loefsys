@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_extensions",
     # Dependencies
     "rest_framework",
     "phonenumber_field",
@@ -47,7 +48,6 @@ INSTALLED_APPS = [
     "committees.apps.CommitteesConfig",
     "events.apps.EventsConfig",
     "reservations.apps.ReservationsConfig",
-    "boats.apps.BoatsConfig",
     "utils",
 ]
 
