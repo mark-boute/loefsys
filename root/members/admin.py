@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from members.models import Member
-from committees.models import CommitteeMembership
+from groups.models import MemberGroupMembership
 from events.models import EventRegistration
 
 
@@ -73,15 +73,15 @@ class MemberInline(admin.StackedInline):
     ]
 
 
-class CommitteeInline(admin.TabularInline):
-    model = CommitteeMembership
+class GroupsInline(admin.TabularInline):
+    model = MemberGroupMembership
     extra = 0
     classes = ["collapse"]
     can_delete = False
     ordering = ("-is_head", "since")
 
     def get_queryset(self, request):
-        return super(CommitteeInline, self).get_queryset(request).filter(until=None)
+        return super(GroupsInline, self).get_queryset(request).filter(until=None)
 
     def has_delete_permission(self, request, obj=None):
         return request.user.is_superuser
@@ -101,25 +101,25 @@ class FutureEventRegistrationsInline(admin.TabularInline):
         )
 
 
-class CommitteeHeadFilter(admin.SimpleListFilter):
-    title = _("committee head")
-    parameter_name = "is_head"
-
-    def lookups(self, request, model_admin):
-        return (
-            ("Yes", _("Yes")),
-            ("No", _("No")),
-        )
-
-    def queryset(self, request, queryset):
-        committee_heads = CommitteeMembership.objects.filter(
-            Q(is_head=True) & Q(until=None)
-        ).values_list("user_id", flat=True)
-        if self.value() == "Yes":
-            return queryset.filter(id__in=committee_heads)
-
-        if self.value() == "No":
-            return queryset.exclude(id__in=committee_heads)
+# class CommitteeHeadFilter(admin.SimpleListFilter):
+#     title = _("committee head")
+#     parameter_name = "is_head"
+#
+#     def lookups(self, request, model_admin):
+#         return (
+#             ("Yes", _("Yes")),
+#             ("No", _("No")),
+#         )
+#
+#     def queryset(self, request, queryset):
+#         committee_heads = CommitteeMembership.objects.filter(
+#             Q(is_head=True) & Q(until=None)
+#         ).values_list("user_id", flat=True)
+#         if self.value() == "Yes":
+#             return queryset.filter(id__in=committee_heads)
+#
+#         if self.value() == "No":
+#             return queryset.exclude(id__in=committee_heads)
 
 
 class CityListFilter(admin.SimpleListFilter):
@@ -156,9 +156,9 @@ class UserAdmin(DjangoUserAdmin):
         "email",
     ]  # , 'member__student_number', 'member__is_committee_head'
     # actions = []
-    inlines = [MemberInline, CommitteeInline, FutureEventRegistrationsInline]
+    inlines = [MemberInline, GroupsInline, FutureEventRegistrationsInline]
     list_filter = (
-        CommitteeHeadFilter,
+        # CommitteeHeadFilter,
         "member__gender",
         CityListFilter,
         "groups",
