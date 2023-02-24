@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, User
 from django.utils.translation import gettext_lazy as _
 
 
@@ -11,7 +11,7 @@ class ActiveMemberGroupManager(models.Manager):
 
 
 class MemberGroup(models.Model):
-    """Describes a groups of members."""
+    """Describes a groups of members (Users with Membership object)."""
 
     objects = models.Manager()
     active_objects = ActiveMemberGroupManager()
@@ -29,24 +29,12 @@ class MemberGroup(models.Model):
     # )
 
     members = models.ManyToManyField(
-        "members.Member", through="groups.MemberGroupMembership"
+        User, through="groups.MemberGroupMembership"
     )
 
     permissions = models.ManyToManyField(
         Permission,
         verbose_name=_("permissions"),
-        blank=True,
-    )
-
-    since = models.DateField(
-        _("founded in"),
-        null=True,
-        blank=True,
-    )
-
-    until = models.DateField(
-        _("existed until"),
-        null=True,
         blank=True,
     )
 
@@ -74,6 +62,18 @@ class MemberGroup(models.Model):
 
     display_members = models.BooleanField(
         default=False,
+    )
+
+    since = models.DateField(
+        _("founded in"),
+        null=True,
+        blank=True,
+    )
+
+    until = models.DateField(
+        _("existed until"),
+        null=True,
+        blank=True,
     )
 
     def __str__(self):

@@ -1,7 +1,10 @@
+import datetime
+
 from django.db import models
 
 from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
+
+from django.conf import settings
 
 from groups.models.membergroup import MemberGroup
 
@@ -10,7 +13,7 @@ class ActiveMembershipManager(models.Manager):
     """Custom manager that gets the currently active membergroup memberships."""
 
     def get_queryset(self):
-        return super().get_queryset().exclude(until__lt=timezone.now().date())
+        return super().get_queryset().exclude(group__active=False).order_by("group__name")
 
 
 class MemberGroupMembership(models.Model):
@@ -19,29 +22,17 @@ class MemberGroupMembership(models.Model):
     objects = models.Manager()
     active_objects = ActiveMembershipManager()
 
-    member = models.ForeignKey(
-        "members.Member",
-        on_delete=models.CASCADE,
-        verbose_name=_("Member"),
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        models.SET_NULL,
+        null=True
+        # limit_choices_to=registration_user_choices_limit,
     )
 
     group = models.ForeignKey(
         MemberGroup,
         on_delete=models.CASCADE,
         verbose_name=_("Group"),
-    )
-
-    since = models.DateField(
-        verbose_name=_("Member since"),
-        help_text=_("The date this member joined in this role"),
-        default=timezone.now().date,
-    )
-
-    until = models.DateField(
-        verbose_name=_("Member until"),
-        help_text=_("A member until this time (can't be in the future)."),
-        blank=True,
-        null=True,
     )
 
     chair = models.BooleanField(
@@ -53,6 +44,19 @@ class MemberGroupMembership(models.Model):
         _("role"),
         help_text=_("The role of this member"),
         max_length=255,
+        blank=True,
+        null=True,
+    )
+
+    since = models.DateField(
+        verbose_name=_("Member since"),
+        help_text=_("The date this member joined in this role"),
+        default=datetime.date.today,
+    )
+
+    until = models.DateField(
+        verbose_name=_("Member until"),
+        help_text=_("A member until this time (can't be in the future)."),
         blank=True,
         null=True,
     )

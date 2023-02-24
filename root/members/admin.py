@@ -7,8 +7,9 @@ from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from members.models import Member
 from groups.models import MemberGroupMembership
+from members.models import Member
+
 from events.models import EventRegistration
 
 
@@ -78,7 +79,7 @@ class GroupsInline(admin.TabularInline):
     extra = 0
     classes = ["collapse"]
     can_delete = False
-    ordering = ("-is_head", "since")
+    ordering = ("chair", "since")
 
     def get_queryset(self, request):
         return super(GroupsInline, self).get_queryset(request).filter(until=None)
