@@ -45,9 +45,9 @@ INSTALLED_APPS = [
     "loefsys.apps.LoefSysConfig",
     "django.contrib.admin",
     "members.apps.MembersConfig",
-    "committees.apps.CommitteesConfig",
+    "groups.apps.GroupsConfig",
     "events.apps.EventsConfig",
-    "reservations.apps.ReservationsConfig",
+    # "reservations.apps.ReservationsConfig",
     "utils",
 ]
 
