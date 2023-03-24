@@ -15,6 +15,6 @@ class Fraternity(MemberGroup):
     gender_requirement = models.CharField(
         max_length=6,
         choices=GENDER_CHOICES,
-        default="MIXED"
+        default="MIXED",
     )
 

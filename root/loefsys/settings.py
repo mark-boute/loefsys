@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     "members.apps.MembersConfig",
     "groups.apps.GroupsConfig",
     "events.apps.EventsConfig",
-    # "reservations.apps.ReservationsConfig",
+    "reservations.apps.ReservationsConfig",
     "utils",
 ]
 
