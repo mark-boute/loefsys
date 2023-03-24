@@ -12,6 +12,7 @@ What is a reservation:
  - A reservation has a reference to a person (or group?).
  - A reservation has a function which can calculate any costs related to that reservation.
  - A reservation has a log, which the user must fill in after the reservation has ended.
+ - A Reservation can be linked to a group, training or event.
 
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -21,7 +22,6 @@ What is a boat:
  - A boat requires a certain skipper-ship.
  - A boat can have a limited amount of persons on board.
  - A boat can have an engine.
-
 
 What is a boat reservation:
  - A boat reservation can be linked to a training (or event),
@@ -35,8 +35,6 @@ What is a gear-piece:
  - Is of a type.
  - Has a size measure.
 
-What is a gear-piece reservation:
- - A gear-piece reservation can be linked to a person or training (or event).
 
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -44,10 +42,8 @@ What is a room:
  - A room is a place the Loefbijter owns which can be used by any party within the Loefbijter.
    (This does not include the VvS)
  - A room has a limited capacity.
- - A room has a location/address.
+ - A room has a required permission
 
-What is a room reservation:
-    - A reservation made by any user or group with the needed permissions.
 
 
 
