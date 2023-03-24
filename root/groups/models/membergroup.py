@@ -41,7 +41,7 @@ class MemberGroup(models.Model):
     active = models.BooleanField(
         default=False,
         help_text=_(
-            "This should only be unchecked if the committee has been "
+            "This should only be unchecked if the group has been "
             "dissolved."
         ),
     )
