@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from membergroup import MemberGroup
+from .membergroup import MemberGroup
 
 
 class Committee(MemberGroup):

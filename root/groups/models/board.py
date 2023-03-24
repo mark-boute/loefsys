@@ -2,7 +2,7 @@ import datetime
 
 from django.db import models
 
-from membergroup import MemberGroup
+from .membergroup import MemberGroup
 
 
 class Board(MemberGroup):
